@@ -108,17 +108,18 @@ input::placeholder {
         }
 
         label {
-            font-size: 13px; /* ফন্ট সাইজ সামান্য ছোট করা হলো */
+            font-size: 16px; /* লেবেলের ফন্ট সাইজ বাড়িয়ে স্পষ্ট করা হলো */
             font-weight: 600;
             color: var(--primary);
+            margin-bottom: 2px;
         }
 
         input[type="text"], select, input[type="file"] {
             width: 100%;
-            padding: 10px 12px; /* ইনপুট বক্সগুলোর উচ্চতা নিখুঁতভাবে কমানো হলো */
+            padding: 12px 14px; /* টেক্সট বক্সের ভেতরের স্পেথ বড় করা হলো */
             border: 1px solid var(--border-color);
-            border-radius: 4px; /* Flat look */
-            font-size: 14px;
+            border-radius: 4px;
+            font-size: 16px; /* ইনপুট ও ড্রপডাউন সিলেকশনের মেইন টেক্সট বড় করা হলো */
             outline: none;
             background: var(--bg-color);
             transition: border-color 0.3s;
@@ -133,8 +134,8 @@ input::placeholder {
             justify-content: center;
             align-items: center;
             width: 100%;
-            max-width: 360px; /* আপনার স্ক্রিনশটের চওড়া অনুযায়ী পারফেক্ট সাইজ */
-            aspect-ratio: 1 / 1; /* এটি বক্সটিকে নিখুঁত চতুর্ভুজাকৃতি (Square) রাখবে */
+            max-width: 360px;
+            aspect-ratio: 1 / 1;
             margin: 0 auto;
             padding: 20px;
             background: var(--surface-color);
@@ -151,12 +152,12 @@ input::placeholder {
         }
 
         button {
-            padding: 14px;
+            padding: 14px 10px;
             background: var(--primary);
             color: #ffffff;
             border: none;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 15px; /* ডাউনলোডের ৩টি বাটনের ফন্ট প্রফেশনালি বড় করা হলো */
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s;
@@ -164,6 +165,137 @@ input::placeholder {
 
         button:hover {
             background: var(--primary-hover);
+        }
+
+        /* --- PREMIUM ANIMATED DROPDOWN UI CORE --- */
+        .select-hide {
+            display: none !important;
+        }
+
+        /* --- PREMIUM FILE UPLOADER ARCHITECTURE --- */
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        /* ডিফল্ট ব্রাউজার ইনপুট হাইড করার প্রফেশনাল মেথড */
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            left: 0; top: 0; opacity: 0;
+            width: 100%; height: 100%;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .custom-file-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 15px;
+            color: #555555;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .custom-file-trigger:after {
+            content: "🖥️ ফাইল বাছুন";
+            background: var(--primary);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        /* লোগো সিলেক্টেড থাকলে বাটন হাইড করার সিকিউরড মেকানিজম */
+        .custom-file-trigger.file-selected:after {
+            display: none !important;
+        }
+
+        .file-upload-wrapper:hover .custom-file-trigger {
+            border-color: var(--primary);
+            background: #f1f3f5;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+
+        .select-selected {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 12px 14px; /* ড্রপডাউন বক্সের প্যাডিং বাড়ানো হলো */
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px; /* সিলেক্টেড ড্রপডাউন টেক্সট ১৬ পিক্সেল করা হলো */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .select-selected:after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: translateY(-2px) rotate(45deg);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            margin-right: 4px;
+        }
+
+        .select-selected.select-arrow-active:after {
+            transform: translateY(2px) rotate(-135deg);
+        }
+
+        .select-items {
+            position: absolute;
+            background-color: var(--bg-color);
+            top: 100%; left: 0; right: 0;
+            z-index: 99;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 10px 25px rgba(10, 37, 64, 0.08);
+            max-height: 250px;
+            overflow-y: auto;
+
+            /* অ্যানিমেশন ইনিশিয়াল স্টেট */
+            opacity: 0;
+            transform: translateY(-10px);
+            visibility: hidden;
+            transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                        transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                        visibility 0.3s;
+        }
+
+        .select-items.show {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .select-items div {
+            color: var(--text-color);
+            padding: 12px 14px;
+            cursor: pointer;
+            font-size: 15px; /* ড্রপডাউন মেনু ওপেন হলে ভেতরের অপশনগুলোর ফন্ট সাইজ */
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .select-items div:hover, .same-as-selected {
+            background-color: var(--surface-color);
+            color: var(--primary) !important;
+            font-weight: 500;
         }
 
         /* Download Ad Modal */
@@ -222,6 +354,10 @@ input::placeholder {
             }
             input[type="text"], select, input[type="file"] {
                 padding: 6px 10px !important; /* ইনপুট ফিল্ডের হাইট ল্যাপটপ ভিউপোর্টের জন্য অপ্টিমাইজড */
+                font-size: 13px !important;
+            }
+            .select-selected, .select-items div {
+                padding: 6px 10px !important;
                 font-size: 13px !important;
             }
             #canvas-container {
@@ -309,9 +445,12 @@ input::placeholder {
 
                 <div class="input-group">
                     <label>মাঝখানে লোগো যুক্ত করুন (ঐচ্ছিক)</label>
-                    <div style="position: relative; width: 100%;">
-                        <input type="file" id="qr-logo" accept="image/png, image/jpeg" style="padding-right: 50px;">
-                        <button type="button" id="remove-logo-btn" onclick="clearSelectedLogo()" style="display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; padding: 0; background: #ff4d4d; color: #ffffff; border-radius: 4px; font-size: 16px; font-weight: bold; justify-content: center; align-items: center; z-index: 10;">✕</button>
+                    <div class="file-upload-wrapper" style="position: relative; width: 100%;">
+                        <div class="custom-file-trigger" id="file-label-text">কোনো ফাইল নির্বাচন করা হয়নি</div>
+
+                        <input type="file" id="qr-logo" accept="image/png, image/jpeg">
+
+                        <button type="button" id="remove-logo-btn" onclick="clearSelectedLogo()" style="display: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; padding: 0; background: #ff4d4d; color: #ffffff; border-radius: 4px; font-size: 14px; font-weight: bold; justify-content: center; align-items: center; z-index: 10; border: none; cursor: pointer;">✕</button>
                     </div>
                 </div>
 
@@ -460,16 +599,25 @@ input::placeholder {
         document.getElementById('qr-logo').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const removeBtn = document.getElementById('remove-logo-btn');
+            const labelText = document.getElementById('file-label-text');
+
             if (file) {
+                labelText.innerText = file.name;
+                labelText.style.color = "var(--primary)";
+                labelText.classList.add('file-selected'); // বাটন হাইড করার কমান্ড
+
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     currentLogo = event.target.result;
                     updateQR();
-                    removeBtn.style.display = 'flex'; // লোগো আসলে ক্রস বাটন দেখাবে
+                    removeBtn.style.display = 'flex';
                 };
                 reader.readAsDataURL(file);
             } else {
                 currentLogo = "";
+                labelText.innerText = "কোনো ফাইল নির্বাচন করা হয়নি";
+                labelText.style.color = "#555555";
+                labelText.classList.remove('file-selected');
                 updateQR();
                 removeBtn.style.display = 'none';
             }
@@ -563,12 +711,16 @@ input::placeholder {
             });
         }
 
-        // লোগো রিমুভ করার এবং ইনপুট ফিল্ড রিসেট করার প্রফেশনাল মেথড
+       // লোগো রিমুভ করার এবং ইনপুট ফিল্ড রিসেট করার প্রফেশনাল মেথড
         function clearSelectedLogo() {
-            document.getElementById('qr-logo').value = ""; // ফাইল মেমোরি ক্লিন
-            currentLogo = ""; // ইমেজ সোর্স ভ্যানিশ
-            document.getElementById('remove-logo-btn').style.display = 'none'; // ক্রস বাটন হাইড
-            updateQR(); // কিউআর কোড রি-রেন্ডার
+            document.getElementById('qr-logo').value = "";
+            currentLogo = "";
+            const labelText = document.getElementById('file-label-text');
+            labelText.innerText = "কোনো ফাইল নির্বাচন করা হয়নি";
+            labelText.style.color = "#555555";
+            labelText.classList.remove('file-selected'); // ক্লাস রিমুভ করে বাটন ফিরিয়ে আনা হলো
+            document.getElementById('remove-logo-btn').style.display = 'none';
+            updateQR();
         }
 
         initQR();
@@ -728,6 +880,82 @@ input::placeholder {
             if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) return false;
             if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
         }
+
+        // --- ULTRA-PREMIUM CUSTOM DROPDOWN ENGINE ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const selects = document.querySelectorAll("main select");
+
+            selects.forEach(select => {
+                const wrapper = document.createElement("div");
+                wrapper.setAttribute("class", "custom-select-wrapper");
+                select.parentNode.insertBefore(wrapper, select);
+                wrapper.appendChild(select);
+
+                const selectedDiv = document.createElement("div");
+                selectedDiv.setAttribute("class", "select-selected");
+                selectedDiv.innerHTML = select.options[select.selectedIndex].innerHTML;
+                wrapper.appendChild(selectedDiv);
+
+                const itemsDiv = document.createElement("div");
+                itemsDiv.setAttribute("class", "select-items");
+
+                for (let j = 0; j < select.length; j++) {
+                    const optionDiv = document.createElement("div");
+                    optionDiv.innerHTML = select.options[j].innerHTML;
+                    if (j === select.selectedIndex) optionDiv.setAttribute("class", "same-as-selected");
+
+                    optionDiv.addEventListener("click", function() {
+                        const s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                        const h = this.parentNode.previousSibling;
+                        for (let i = 0; i < s.length; i++) {
+                            if (s.options[i].innerHTML == this.innerHTML) {
+                                s.selectedIndex = i;
+                                h.innerHTML = this.innerHTML;
+                                const y = this.parentNode.getElementsByClassName("same-as-selected");
+                                for (let k = 0; k < y.length; k++) {
+                                    y[k].removeAttribute("class");
+                                }
+                                this.setAttribute("class", "same-as-selected");
+                                // ডিফল্ট চেঞ্জ ইভেন্ট ফায়ার করা যাতে কিউআর কোড লাইভ আপডেট হয়
+                                s.dispatchEvent(new Event('change'));
+                                break;
+                            }
+                        }
+                        h.click();
+                    });
+                    itemsDiv.appendChild(optionDiv);
+                }
+
+                wrapper.appendChild(itemsDiv);
+                select.classList.add("select-hide");
+
+                selectedDiv.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    closeAllSelect(this);
+                    this.nextSibling.classList.toggle("show");
+                    this.classList.toggle("select-arrow-active");
+                });
+            });
+
+            function closeAllSelect(elmnt) {
+                const arrNo = [];
+                const items = document.getElementsByClassName("select-items");
+                const selected = document.getElementsByClassName("select-selected");
+                for (let i = 0; i < selected.length; i++) {
+                    if (elmnt == selected[i]) {
+                        arrNo.push(i);
+                    } else {
+                        selected[i].classList.remove("select-arrow-active");
+                    }
+                }
+                for (let i = 0; i < items.length; i++) {
+                    if (arrNo.indexOf(i)) {
+                        items[i].classList.remove("show");
+                    }
+                }
+            }
+            document.addEventListener("click", closeAllSelect);
+        });
 
     </script>
 </body>
