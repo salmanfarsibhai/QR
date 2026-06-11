@@ -195,30 +195,51 @@ input::placeholder {
 
         /* Laptop & Medium Screen Optimization */
         @media (min-width: 901px) and (max-width: 1400px) {
+            body {
+                height: 100vh !important;
+                overflow: hidden !important; /* ল্যাপটপ স্ক্রিনে গ্লোবাল স্ক্রোলিং সম্পূর্ণ লক করা হলো */
+            }
+            .wrapper {
+                height: 100vh !important;
+                max-height: 100vh !important;
+            }
             .main-section {
-                padding: 10px 5px !important;
+                padding: 5px 10px !important;
+                justify-content: center !important;
+                height: 100% !important;
+                overflow: hidden !important;
             }
             .generator-container {
-                max-width: 480px !important; /* ল্যাপটপ স্ক্রিনে বক্সটি সামান্য স্লিম হবে */
-                gap: 8px !important; /* গ্যাপ কমে এক স্ক্রিনে ফিট হবে */
+                max-width: 440px !important; /* ল্যাপটপ স্ক্রিনের জন্য বক্সের উইডথ পারফেক্ট রেশিওতে আনা হলো */
+                gap: 6px !important; /* এলিমেন্টগুলোর গ্যাপ আরেকটু টাইট করা হলো */
+                margin-bottom: 0 !important;
+            }
+            .input-group {
+                gap: 3px !important;
+            }
+            label {
+                font-size: 12px !important;
             }
             input[type="text"], select, input[type="file"] {
-                padding: 8px 10px !important; /* ইনপুটের উচ্চতা ল্যাপটপের জন্য পারফেক্ট সাইজ */
+                padding: 6px 10px !important; /* ইনপুট ফিল্ডের হাইট ল্যাপটপ ভিউপোর্টের জন্য অপ্টিমাইজড */
                 font-size: 13px !important;
             }
             #canvas-container {
-                max-width: 280px !important; /* কিউআর কোড প্রিভিউ বক্সটি ল্যাপটপে স্ক্রোল প্রোটেকশন দেবে */
+                max-width: 220px !important; /* কিউআর প্রিভিউ বক্স ছোট করে এক স্ক্রিনে ফিট করা হলো */
                 padding: 10px !important;
+                margin: 5px auto !important;
             }
             .btn-group {
-                margin-top: 10px !important;
+                margin-top: 5px !important;
+                gap: 6px !important;
             }
             button {
-                padding: 10px !important;
-                font-size: 12px !important;
+                padding: 8px 5px !important;
+                font-size: 11px !important;
             }
             .ad-sidebar {
-                width: 360px !important; /* সাইডবার অ্যাড এরিয়া ল্যাপটপের রেশিও অনুযায়ী ছোট হবে */
+                width: 320px !important; /* সাইডবারটি ল্যাপটপের উইডথ অনুপাতে ব্যালেন্সড */
+                height: 100vh !important;
             }
         }
 
@@ -408,9 +429,12 @@ input::placeholder {
 
         // Initial setup for standard preview
         function initQR() {
+            // স্ক্রিন সাইজ চেক করে লাইভ প্রিভিউয়ের উইডথ ডাইনামিকালি সেট করার ইঞ্জিন
+            const previewSize = (window.innerWidth > 900 && window.innerWidth <= 1400) ? 220 : 300;
+
             qrCode = new QRCodeStyling({
-                width: 300,
-                height: 300,
+                width: previewSize,
+                height: previewSize,
                 type: "svg",
                 data: getFormattedQRData(),
                 image: currentLogo,
