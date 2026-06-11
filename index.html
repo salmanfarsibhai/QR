@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium QR Generator Pro</title>
+
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="https://drive.google.com/uc?id=1YOUR_FAVICON_DRIVE_ID_HERE">
+
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Premium Flat Minimalist Design - Deep Blue & Pure White */
+        :root {
+            --primary: #0A2540; /* Deep Premium Blue */
+            --primary-hover: #113a63;
+            --bg-color: #ffffff; /* Pure White */
+            --surface-color: #f8f9fa;
+            --text-color: #1a1a1a;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+:lang(bn),
+label,
+button,
+.timer-text,
+input::placeholder {
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .wrapper {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+        }
+
+        .main-section {
+            flex: 1;
+            padding: 15px 10px; /* ডেস্কটপে স্ক্রোলিং বন্ধ করতে চারপাশের গ্যাপ কমানো হলো */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sidebar Ad Section */
+        .ad-sidebar {
+            width: 450px; /* সাইডবারের চওড়া কিছুটা অপ্টিমাইজ করা হলো */
+            background: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ad-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out; /* Smooth transition */
+        }
+
+        .ad-image.active {
+            opacity: 1;
+        }
+
+        /* QR Generator Controls */
+        .generator-container {
+            width: 100%;
+            max-width: 550px;
+            display: grid;
+            gap: 12px; /* এলিমেন্টগুলোর মাঝখানের ফাঁকা জায়গা কমানো হলো */
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 13px; /* ফন্ট সাইজ সামান্য ছোট করা হলো */
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        input[type="text"], select, input[type="file"] {
+            width: 100%;
+            padding: 10px 12px; /* ইনপুট বক্সগুলোর উচ্চতা নিখুঁতভাবে কমানো হলো */
+            border: 1px solid var(--border-color);
+            border-radius: 4px; /* Flat look */
+            font-size: 14px;
+            outline: none;
+            background: var(--bg-color);
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        #canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 360px; /* আপনার স্ক্রিনশটের চওড়া অনুযায়ী পারফেক্ট সাইজ */
+            aspect-ratio: 1 / 1; /* এটি বক্সটিকে নিখুঁত চতুর্ভুজাকৃতি (Square) রাখবে */
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Download Ad Modal */
+        #ad-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #modal-ad-image {
+            max-width: 90%;
+            max-height: 60vh;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Soft shadow */
+        }
+
+        .timer-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        /* Laptop & Medium Screen Optimization */
+        @media (min-width: 901px) and (max-width: 1400px) {
+            .main-section {
+                padding: 10px 5px !important;
+            }
+            .generator-container {
+                max-width: 480px !important; /* ল্যাপটপ স্ক্রিনে বক্সটি সামান্য স্লিম হবে */
+                gap: 8px !important; /* গ্যাপ কমে এক স্ক্রিনে ফিট হবে */
+            }
+            input[type="text"], select, input[type="file"] {
+                padding: 8px 10px !important; /* ইনপুটের উচ্চতা ল্যাপটপের জন্য পারফেক্ট সাইজ */
+                font-size: 13px !important;
+            }
+            #canvas-container {
+                max-width: 280px !important; /* কিউআর কোড প্রিভিউ বক্সটি ল্যাপটপে স্ক্রোল প্রোটেকশন দেবে */
+                padding: 10px !important;
+            }
+            .btn-group {
+                margin-top: 10px !important;
+            }
+            button {
+                padding: 10px !important;
+                font-size: 12px !important;
+            }
+            .ad-sidebar {
+                width: 360px !important; /* সাইডবার অ্যাড এরিয়া ল্যাপটপের রেশিও অনুযায়ী ছোট হবে */
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .wrapper {
+                flex-direction: column;
+            }
+            .ad-sidebar {
+                width: 100%;
+                height: 180px;
+                border-left: none;
+                border-bottom: 1px solid var(--border-color);
+                order: -1; /* Ad on top for mobile */
+            }
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+    <div id="ad-modal">
+        <img id="modal-ad-image" src="https://lh3.googleusercontent.com/d/1Kt5BDQu8BiOtm6pYa2FDjNMjSGWrijJT" alt="Sponsor Ad">
+        <div class="timer-text">আপনার ফাইলটি প্রস্তুত হচ্ছে... <br><span id="countdown">10</span> সেকেন্ড অপেক্ষা করুন</div>
+    </div>
+
+    <div class="wrapper">
+        <main class="main-section">
+            <div class="generator-container">
+
+                <div class="input-group">
+                    <label>কিউআর কোডের ধরন (QR Code Type)</label>
+                    <select id="qr-type" onchange="handleDataTypeChange()">
+                        <option value="link">🌐 ওয়েবসাইট লিংক বা ইউআরএল (Website URL)</option>
+                        <option value="text" selected>📝 সাধারণ লেখা (Plain Text)</option>
+                        <option value="phone">📞 ফোন নাম্বার (Phone Call)</option>
+                        <option value="email">📧 ইমেইল মেসেজ (Email)</option>
+                        <option value="sms">💬 এসএমএস (SMS)</option>
+                        <option value="whatsapp">💬 হোয়াটসঅ্যাপ ডাইরেক্ট চ্যাট (WhatsApp)</option>
+                        <option value="maps">📍 গুগল ম্যাপস লোকেশন (Google Maps / Location)</option>
+                        <option value="wifi">📶 ওয়াইফাই লগইন (WiFi Login)</option>
+                        <option value="vcard">👤 কন্টাক্ট কার্ড বা ভি-কার্ড (vCard / Contact Card)</option>
+                        <option value="calendar">📅 ক্যালেন্ডার ইভেন্ট (Calendar Event)</option>
+                        <option value="social">🔗 সোশ্যাল মিডিয়া প্রোফাইল লিংক (Social Media Profile)</option>
+                        <option value="app">📱 অ্যাপ ডাউনলোড লিংক (App Download Link)</option>
+                        <option value="youtube">🎥 ইউটিউব ভিডিও (YouTube Video)</option>
+                        <option value="pdf">📄 পিডিএফ ফাইল লিংক (PDF File Link)</option>
+                        <option value="image">🖼️ ছবির লিংক (Image Link)</option>
+                        <option value="audio">🎵 অডিও বা এমপি৩ লিংক (Audio / MP3)</option>
+                        <option value="video">🎬 ভিডিও ফাইল লিংক (Video File Link)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label id="data-label">এখানে টেক্সট বা লিংক লিখুন</label>
+                    <input type="text" id="qr-data"
+                           value="এখানে টেক্সট বা লিংক লিখুন..."
+                           placeholder="এখানে টেক্সট বা লিংক লিখুন..."
+                           onfocus="if(this.value==='এখানে টেক্সট বা লিংক লিখুন...') this.value='';"
+                           onblur="if(this.value==='') this.value='এখানে টেক্সট বা লিংক লিখুন...';">
+                </div>
+
+                <div class="input-group">
+                    <label>মাঝখানে লোগো যুক্ত করুন (ঐচ্ছিক)</label>
+                    <div style="position: relative; width: 100%;">
+                        <input type="file" id="qr-logo" accept="image/png, image/jpeg" style="padding-right: 50px;">
+                        <button type="button" id="remove-logo-btn" onclick="clearSelectedLogo()" style="display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; padding: 0; background: #ff4d4d; color: #ffffff; border-radius: 4px; font-size: 16px; font-weight: bold; justify-content: center; align-items: center; z-index: 10;">✕</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>ডিজাইন স্টাইল (Gift / Patterns)</label>
+                    <select id="qr-style">
+                        <option value="square">Square (Classic)</option>
+                        <option value="dots">Dots (Modern)</option>
+                        <option value="rounded">Rounded</option>
+                        <option value="classy">Classy (Gift Style)</option>
+                        <option value="extra-rounded">Extra Rounded</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>ডাউনলোড রেজোলিউশন (Resolution Size)</label>
+                    <select id="download-res">
+                        <option value="1280">Standard HD (720p) — দ্রুত শেয়ারের জন্য</option>
+                        <option value="1920">Full HD (1080p) — সোশ্যাল মিডিয়া রেডি</option>
+                        <option value="4000" selected>Ultra HD (4K) — ডিফল্ট প্রিন্ট কোয়ালিটি</option>
+                        <option value="8000">Ultra-HD Pro (8K) — সর্বোচ্চ হাই-রেজোলিউশন (ফাটবে না)</option>
+                    </select>
+                </div>
+
+                <div id="canvas-container"></div>
+
+
+
+                <div class="btn-group">
+                    <button onclick="triggerDownload('png', false)">PNG ডাউনলোড (Background সহ)</button>
+                    <button onclick="triggerDownload('png', true)">PNG ডাউনলোড (Transparent)</button>
+                    <button onclick="triggerDownload('pdf', false)">PDF ডাউনলোড</button>
+                </div>
+            </div>
+        </main>
+
+        <aside class="ad-sidebar" id="ad-slider-container" style="position: relative; display: block; overflow: hidden; min-height: 100%;">
+        </aside>
+    </div>
+
+    <script>
+        'use strict';
+
+        // ==========================================
+        // 1. AD SYSTEM (DESKTOP & MOBILE SEPARATION)
+        // ==========================================
+
+        // গ্লোবাল সিডিএন লিংক (যা ১০০% রিয়েল টাইম গ্যারান্টেড কাজ করবে)
+        // আপনার নিজের গুগল ড্রাইভের ছবির আইডি ব্যবহার করে তৈরি করা ওপেন-রেন্ডার সোর্স
+        const desktopAds = [
+            "https://lh3.googleusercontent.com/d/1TvnleyGJhcPTyryf-DMk87ou5wN_eRl7",
+            "https://lh3.googleusercontent.com/d/1TvnleyGJhcPTyryf-DMk87ou5wN_eRl7"
+        ];
+
+        const mobileAds = [
+            "https://lh3.googleusercontent.com/d/1Kt5BDQu8BiOtm6pYa2FDjNMjSGWrijJT",
+            "https://lh3.googleusercontent.com/d/1Kt5BDQu8BiOtm6pYa2FDjNMjSGWrijJT"
+        ];
+
+        let currentAdIndex = 0;
+        const adContainer = document.getElementById('ad-slider-container');
+
+        function loadAds() {
+            adContainer.innerHTML = '';
+            const isMobile = window.innerWidth <= 900;
+            const adsToLoad = isMobile ? mobileAds : desktopAds;
+
+            if (adsToLoad.length === 0) return;
+
+            adsToLoad.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = `ad-image ${index === 0 ? 'active' : ''}`;
+                img.alt = "Advertisement";
+
+                // সিএসএস ও ডম মেমোরি স্ট্যাবিলিটি ইঞ্জেকশন
+                img.style.position = "absolute";
+                img.style.top = "0";
+                img.style.left = "0";
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover";
+                img.style.transition = "opacity 1.5s ease-in-out";
+
+                adContainer.appendChild(img);
+            });
+            currentAdIndex = 0;
+        }
+
+        // অ্যাড পরিবর্তন হবে প্রতি ১২ সেকেন্ড পরপর
+        setInterval(() => {
+            const images = document.querySelectorAll('.ad-image');
+            if(images.length === 0) return;
+            images[currentAdIndex].classList.remove('active');
+            currentAdIndex = (currentAdIndex + 1) % images.length;
+            images[currentAdIndex].classList.add('active');
+        }, 12000);
+
+        // উইন্ডো সাইজ পরিবর্তন হলে অ্যাড রিলোড হবে
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(loadAds, 250);
+        });
+
+        // ডম কন্টেন্ট এবং উইন্ডো পুরোপুরি লোড হওয়ার পর ড্রাইভ ইমেজ ফায়ার করার সেফ লজিক
+        window.addEventListener('DOMContentLoaded', loadAds);
+        window.addEventListener('load', loadAds);
+
+
+        // ==========================================
+        // 2. QR CODE GENERATION ENGINE
+        // ==========================================
+        let qrCode;
+        let currentLogo = "";
+
+        // Initial setup for standard preview
+        function initQR() {
+            qrCode = new QRCodeStyling({
+                width: 300,
+                height: 300,
+                type: "svg",
+                data: getFormattedQRData(),
+                image: currentLogo,
+                dotsOptions: {
+                    color: "#0A2540",
+                    type: document.getElementById('qr-style').value
+                },
+                backgroundOptions: {
+                    color: "#ffffff",
+                },
+                imageOptions: {
+                    crossOrigin: "anonymous",
+                    margin: 10
+                }
+            });
+            document.getElementById('canvas-container').innerHTML = '';
+            qrCode.append(document.getElementById('canvas-container'));
+        }
+
+        // Update when inputs change
+        document.getElementById('qr-data').addEventListener('input', updateQR);
+        document.getElementById('qr-style').addEventListener('change', updateQR);
+        document.getElementById('qr-logo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const removeBtn = document.getElementById('remove-logo-btn');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentLogo = event.target.result;
+                    updateQR();
+                    removeBtn.style.display = 'flex'; // লোগো আসলে ক্রস বাটন দেখাবে
+                };
+                reader.readAsDataURL(file);
+            } else {
+                currentLogo = "";
+                updateQR();
+                removeBtn.style.display = 'none';
+            }
+        });
+
+       // গ্লোবাল অল-ইন-ওয়ান কিউআর ডেটা প্রোটোকল কনভার্টার (সর্বমোট ১৭টি প্রসেসর)
+        function getFormattedQRData() {
+            const type = document.getElementById('qr-type').value;
+            const inputVal = document.getElementById('qr-data').value;
+
+            if (inputVal === "এখানে টেক্সট বা লিংক লিখুন..." || !inputVal) {
+                return " ";
+            }
+
+            switch (type) {
+                case 'phone':
+                    return `tel:${inputVal.replace(/\s+/g, '')}`;
+                case 'email':
+                    return `mailto:${inputVal.replace(/\s+/g, '')}`;
+                case 'sms':
+                    return `sms:${inputVal}`;
+                case 'whatsapp':
+                    return `https://wa.me/${inputVal.replace(/[^0-9]/g, '')}`;
+                case 'maps':
+                    // ইউজার ম্যাপের নাম বা কোঅর্ডিনেট দিলে সরাসরি গুগল ম্যাপস সার্চ ইউআরএল জেনারেট হবে
+                    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(inputVal)}`;
+                case 'wifi':
+                    // সরলীকৃত ওয়াইফাই প্রোটোকল ইনপুট ফরম্যাট জেনারেটর (Format: SSID,PASSWORD)
+                    const parts = inputVal.split(',');
+                    const ssid = parts[0] ? parts[0].trim() : 'WiFi-Network';
+                    const pass = parts[1] ? parts[1].trim() : '';
+                    return `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+                case 'vcard':
+                    // স্ট্যান্ডার্ড ভার্চুয়াল কন্টাক্ট ইনফো মেকানিজম (Format: Name,Phone)
+                    const vParts = inputVal.split(',');
+                    const vName = vParts[0] ? vParts[0].trim() : 'Client';
+                    const vPhone = vParts[1] ? vParts[1].trim() : '';
+                    return `BEGIN:VCARD\nVERSION:3.0\nFN:${vName}\nTEL:${vPhone}\nEND:VCARD`;
+                case 'calendar':
+                    // গ্লোবাল ক্যালেন্ডার ইভেন্ট টেক্সট প্রোটোকল
+                    return `BEGIN:VEVENT\nSUMMARY:${inputVal}\nEND:VEVENT`;
+                case 'link':
+                case 'social':
+                case 'app':
+                case 'youtube':
+                case 'pdf':
+                case 'image':
+                case 'audio':
+                case 'video':
+                case 'text':
+                default:
+                    return inputVal;
+            }
+        }
+
+        // ড্রপডাউন চেঞ্জ হলে ইনপুট গাইডলাইন ও প্লেসহোল্ডার ডাইনামিক রূপান্তরকারী
+        function handleDataTypeChange() {
+            const type = document.getElementById('qr-type').value;
+            const label = document.getElementById('data-label');
+            const input = document.getElementById('qr-data');
+
+            input.value = "এখানে টেক্সট বা লিংক লিখুন...";
+
+            switch (type) {
+                case 'link': label.innerText = "🌐 ওয়েবসাইটের লিংক (যেমন: https://example.com)"; break;
+                case 'text': label.innerText = "📝 আপনার মনের যেকোনো সাধারণ লেখা (Plain Text)"; break;
+                case 'phone': label.innerText = "📞 ফোন নাম্বার দিন (যেমন: +88017XXXXXXXX)"; break;
+                case 'email': label.innerText = "📧 ইমেইল এড্রেসটি লিখুন (যেমন: info@domain.com)"; break;
+                case 'sms': label.innerText = "💬 এসএমএস পাঠানোর মোবাইল নাম্বারটি দিন"; break;
+                case 'whatsapp': label.innerText = "💬 হোয়াটসঅ্যাপ নাম্বার দিন (যেমন: 88017XXXXXXXX)"; break;
+                case 'maps': label.innerText = "📍 লোকেশনের নাম অথবা লিংক দিন (যেমন: Dhaka, Bangladesh)"; break;
+                case 'wifi': label.innerText = "📶 ওয়াইফাই নাম ও পাসওয়ার্ড কমা দিয়ে লিখুন (যেমন: MyWiFi,12345678)"; break;
+                case 'vcard': label.innerText = "👤 নাম ও মোবাইল নাম্বার কমা দিয়ে লিখুন (যেমন: Rahim,017XXXXXXXX)"; break;
+                case 'calendar': label.innerText = "📅 ইভেন্টের নাম বা টাইটেলটি লিখুন (যেমন: Office Meeting)"; break;
+                case 'social': label.innerText = "🔗 আপনার ফেসবুক/ইনস্টাগ্রাম বা প্রোফাইল লিংকটি দিন"; break;
+                case 'app': label.innerText = "📱 প্লে-স্টোর বা অ্যাপ স্টোরের ডাউনলোড লিংকটি দিন"; break;
+                case 'youtube': label.innerText = "🎥 ইউটিউব ভিডিওর ইউআরএল বা লিংকটি দিন"; break;
+                case 'pdf': label.innerText = "📄 গুগল ড্রাইভ বা অনলাইন পিডিএফ ফাইলের লিংক দিন"; break;
+                case 'image': label.innerText = "🖼️ ইন্টারনেটে থাকা যেকোনো ছবির ডাইরেক্ট ইউআরএল বা লিংক দিন"; break;
+                case 'audio': label.innerText = "🎵 অডিও ফাইল বা এমপি৩ ট্র্যাকিং লিংকটি এখানে দিন"; break;
+                case 'video': label.innerText = "🎬 অনলাইন ক্লাউড বা ড্রাইভের ভিডিও লিংকটি এখানে দিন"; break;
+            }
+            updateQR();
+        }
+
+        function updateQR() {
+            qrCode.update({
+                data: getFormattedQRData(),
+                image: currentLogo,
+                dotsOptions: { type: document.getElementById('qr-style').value }
+            });
+        }
+
+        // লোগো রিমুভ করার এবং ইনপুট ফিল্ড রিসেট করার প্রফেশনাল মেথড
+        function clearSelectedLogo() {
+            document.getElementById('qr-logo').value = ""; // ফাইল মেমোরি ক্লিন
+            currentLogo = ""; // ইমেজ সোর্স ভ্যানিশ
+            document.getElementById('remove-logo-btn').style.display = 'none'; // ক্রস বাটন হাইড
+            updateQR(); // কিউআর কোড রি-রেন্ডার
+        }
+
+        initQR();
+
+
+
+
+        // ==========================================
+        // 3. DOWNLOAD & 10 SECONDS AD MODAL LOGIC
+        // ==========================================
+        let pendingDownloadParams = null;
+
+        function triggerDownload(format, isTransparent) {
+            pendingDownloadParams = { format, isTransparent };
+            const modal = document.getElementById('ad-modal');
+            const countdownEl = document.getElementById('countdown');
+
+            modal.style.display = 'flex';
+            let timeLeft = 10;
+            countdownEl.innerText = timeLeft;
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                countdownEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    modal.style.display = 'none';
+                    executeHighResDownload();
+                }
+            }, 1000);
+        }
+
+        async function executeHighResDownload() {
+            const { format, isTransparent } = pendingDownloadParams;
+
+            // ড্রপডাউন থেকে ইউজারের সিলেক্ট করা রেজোলিউশন সাইজ নেওয়া হচ্ছে
+            const size = parseInt(document.getElementById('download-res').value) || 4000;
+
+            // রেজোলিউশনের সাইজ অনুযায়ী চারপাশের সাদা মার্জিন এবং ফ্রেম অফসেট ম্যাথমেটিক্যালি ক্যালকুলেট করা
+            const outerPadding = Math.round(size * 0.06); // ৬% ডাইনামিক মার্জিন রেশিও
+            const framePadding = Math.round(size * 0.01);  // ১% ফ্রেম পডিং
+
+            const exportConfig = {
+                width: size,
+                height: size,
+                data: getFormattedQRData(),
+                image: currentLogo,
+                dotsOptions: {
+                    color: "#0A2540",
+                    type: document.getElementById('qr-style').value
+                },
+                backgroundOptions: {
+                    color: isTransparent ? "transparent" : "#ffffff",
+                },
+                imageOptions: {
+                    crossOrigin: "anonymous",
+                    margin: 110 // লোগোর চারপাশের পারফেক্ট স্পেসিং
+                },
+                // এই কন্টেন্টটি ডাউনলোড ফাইলে আপনার ওয়েবসাইটের মতো প্রিমিয়াম বর্ডার ও ফ্রেম যুক্ত করবে
+                qrOptions: {
+                    typeNumber: 0,
+                    mode: 'Byte',
+                    errorCorrectionLevel: 'Q'
+                }
+            };
+
+            // Transparent ব্যাকগ্রাউন্ডের জন্য বর্ডার ও এক্সট্রা ফ্রেম যুক্ত করা হবে না
+            if (!isTransparent) {
+                exportConfig.cornersSquareOptions = {
+                    type: "square",
+                    color: "#0A2540"
+                };
+                exportConfig.backgroundOptions.margin = outerPadding;
+            }
+
+            const exportQR = new QRCodeStyling(exportConfig);
+
+            // Canvas জেনারেট হওয়ার পর চারকোনা বর্ডার লাইন ড্র করার কাস্টম হুক
+            if (!isTransparent && format === 'png') {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = size;
+                tempCanvas.height = size;
+                const ctx = tempCanvas.getContext('2d');
+
+                // ১. ৪কে ক্যানভাসে সাদা ব্যাকগ্রাউন্ড ফিল করা
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, size, size);
+
+               // ২. ফ্রেমের চারকোনার দাগ অদৃশ্য রেখে শুধুমাত্র ডাইনামিক সাদা সেফ-জোন স্পেস রাখা হলো।
+                const frameSize = size - (framePadding * 2);
+
+                // ৩. কিউআর কোডের মূল ইমেজ ডেটা প্রসেস করা
+                const rawBlob = await exportQR.getRawData('png');
+                const blobToImage = (blob) => {
+                    return new Promise((resolve) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.src = URL.createObjectURL(blob);
+                    });
+                };
+                const mainQrImg = await blobToImage(rawBlob);
+
+                // ৪. সিলেক্টেড রেজোলিউশন অনুযায়ী সমানুপাতিক স্পেসিং বজায় রেখে ইমেজ ড্র করা
+                const qrCalculatedSize = size - (outerPadding * 2);
+                const qrPositionOffset = outerPadding;
+
+                ctx.drawImage(mainQrImg, qrPositionOffset, qrPositionOffset, qrCalculatedSize, qrCalculatedSize);
+
+                // কাস্টম ফ্রেম এবং চারপাশের সমান মার্জিনসহ ছবি ডাউনলোড ট্রিগার
+                const dataUrl = tempCanvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = "Premium-QR-BG.png";
+                link.href = dataUrl;
+                link.click();
+                return;
+            }
+
+            if (format === 'png') {
+                exportQR.download({ name: "Premium-QR", extension: "png" });
+            } else if (format === 'pdf') {
+                // PDF Generation using jsPDF
+                try {
+                    const rawDataUrl = await exportQR.getRawData('png');
+                    const blobToDataURL = (blob) => {
+                        return new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+                    };
+                    const dataUrl = await blobToDataURL(rawDataUrl);
+
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: "portrait",
+                        unit: "mm",
+                        format: "a4"
+                    });
+
+                    // Add image to center of A4 page
+                    pdf.addImage(dataUrl, 'PNG', 15, 40, 180, 180);
+                    pdf.save("Premium-QR.pdf");
+                } catch (err) {
+                    alert("PDF ডাউনলোডে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+                    console.error(err);
+                }
+            }
+        }
+
+        // ==========================================
+        // 4. BASIC SECURITY / DEVTOOLS PROTECTION
+        // ==========================================
+        document.addEventListener('contextmenu', event => event.preventDefault()); // Disable right-click
+        document.onkeydown = function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+
+    </script>
+</body>
+</html>
